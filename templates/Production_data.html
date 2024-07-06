@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Audit Data</title>
+    <link rel="stylesheet" href="/static/data.css">
+</head>
+
+<body>
+
+    <div class="headcontainer">
+        <h1>Production Audit Data</h1>
+        <a href="/Production_audit" class="back-link">Back</a>
+        <!-- <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="btnusername">{{username}}</button>
+        </form> -->
+        <img src="/static/kgpng.png" alt="">
+        <br>
+    </div>
+
+    <div class="next-prev">
+        {% if current_page > 1 %}
+        <a href="{{ url_for('display_prd_data', page=current_page - 1) }}">Previous</a>
+        {% else %}
+        <!-- <span>Previous</span> -->
+        {% endif %}
+
+        {% if current_page < total_pages %} 
+        <a href="{{ url_for('display_prd_data', page=current_page + 1) }}">Next</a>
+        {% else %}
+        <!-- <span>Next</span> -->
+        {% endif %}
+    </div>
+
+    <div class="data-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>LOTNO</th>
+                    <th>DISP_LOTNO</th>
+                    <th>MAIN_PKTNO</th>
+                    <th>PKTNO</th>
+                    <th>TAG</th>
+                    <th>CTS</th>
+                    <th>STONE_ID</th>
+                    <th>IO_DATE</th>
+                    <th>PROD_MONTH</th>
+                    <th>RET_DATE</th>
+                    <th>SHAPE</th>
+                    <th>STATUS</th>
+                    <th>AVG_LOCK_VALUE</th>
+                    <th>PROVISIONAL_LOCK_VALUE</th>
+                    <th>DIFF_VALUE</th>
+                    <th>VALUE_STATUS</th>
+                    <th>TOT_PKT_VALUE</th>
+                    <th>TOT_MONTH_VALUE</th>
+                    <th>PERCENTAGE</th>
+                    <th>EXPENSES</th>
+                    <th>MONTHLY_EXPENSES</th>
+                    <th>ENT_DATE</th>
+                    <th>COLOR</th>
+                    <th>CLARITY</th>
+                    <th>CUT</th>
+                    <th>FLOURSCENCE</th>
+                    <th>UPDATE_DATE</th>
+                    <th>JV_Status</th>
+                    <th>MPM_PD_NNS</th>
+                    <th>AVG_MPM_PD_NNS</th>
+                    <th>MAX_CURR_FINAL_RATE_PD_NNS</th>
+                    <th>UPD_PROVISIONAL</th>
+                    <th>UPD_AVG_LOCK</th>
+                    <th>Usename</th>
+                    <th>Action</th>
+                    <th>NNS DIFF</th>
+                    <th>NNS DIFF %</th>
+                    <th>NNS CURR</th>
+                    <th>NNS CURR %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in pro_data_audit %}
+                <tr>{% set index = 0 %}
+                    {% for item in row %}
+                    {% if loop.index == 1 %}
+                    <td id="lotno">{{ item }}</td>
+                    {% elif loop.index == 3 %}
+                    <td id="pktno">{{ item }}</td>
+                    {% elif loop.index == 5 %}
+                    <td id="tag">{{ item }}</td>
+                    {% elif loop.index == row|length - 2 %}
+                    <td contenteditable="true" oninput="validateNumber(event)" id="edit1">{{ item }}</td>
+                    {% elif loop.index == row|length - 1 %}
+                    <td contenteditable="true" oninput="validateNumber(event)" id="edit2">{{ item }}</td>
+                    {% else %}
+                    <td>{{ item }}</td>
+                    {% endif %}
+                    {% set index = index + 1 %}
+                    {% endfor %}
+                    <td><button class="update-btn" onclick="updateValues(this)">Update</button></td>
+                    {% if row|length >= 34 %}
+                    <td>{{ row[30] - row[29] }}</td>
+                    <td>{{ '%.2f' % (((row[30] - row[29])/row[29])*100) }}%</td>
+                    <td>{{ row[31] - row[30] }}</td>
+                    <td>{{ '%.2f' % (((row[31] - row[30])/row[30])*100) }}%</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+<script>
+    function validateNumber(event) {
+        var input = event.target.textContent.trim();
+        if (input.match(/[a-zA-Z]/)) { // Check if input contains alphabets
+            alert("Please enter a valid number");
+            event.target.textContent = '0'; // Clear the input
+        }
+    }
+
+    document.querySelectorAll('.number-input').forEach(element => {
+        element.addEventListener('input', validateNumber);
+    });
+
+    function updateValues(button) {
+        var row = $(button).closest('tr');
+        var lotno = row.find('#lotno').text();
+        var pktno = row.find('#pktno').text();
+        var tag = row.find('#tag').text();
+        var provisional = row.find('#edit1').text();
+        var avg_lock = row.find('#edit2').text();
+        
+
+        $.ajax({
+            url: '/update_production',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                lotno: lotno,
+                pktno: pktno,
+                tag: tag,
+                edit1: provisional,
+                edit2: avg_lock
+            }),
+            success: function (response) {
+                alert(response.message);
+                $.ajax({
+                url: '/post_alert_action',
+                type: 'GET',
+                success: function (response) {
+                    console.log(response.message); // Optionally log the success message
+                    location.reload(); // Reload the page after the post-alert action is completed
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error occurred during post-alert action: ' + error);
+                    location.reload(); // Reload the page even if there's an error
+                }
+            });
+        },
+        error: function (xhr, status, error) {
+            alert('Error occurred while updating values: ' + error);
+        }
+    });
+}
+</script>
+</html>

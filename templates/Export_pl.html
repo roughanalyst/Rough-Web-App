@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P & L Report</title>
+    <link rel="stylesheet" href="/static/reports.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+<body>
+    <div class="container">
+        <h1>P & L Report</h1>
+        <a href="home" class="back-link">Back</a>
+        <a href="/faq_pl" class="nav" style="margin-left:550px;" title="Click to view FAQs">FAQs</a>
+        <img src="/static/kgpng.png" alt="">
+    </div>
+
+    <div class="datecontainer">
+        <form method="post" action="#">
+            <label for="fromMonth">From : </label>
+            <input type="month" id="fromMonth" name="fromMonth" title="From Month" required>
+
+            <label for="toMonth">To : </label>
+            <input type="month" id="toMonth" name="toMonth" title="To Month" required>
+            <label for="type_pl">Type</label>
+            <select name="p_l_type" id="p_l_type">
+                <option value="">--Select Type--</option>
+                <option value="NON-JV">Non JV</option>
+                <option value="JV">JV</option>
+                <option value="All">All</option>
+            </select>
+
+            <input type="submit" id="submitBtn" value="Submit">
+            <button id="exportexcel" type="button" class="excel" title="Click to Export to excel">Export to
+                excel</button>
+            <button id="convertpdf" type="button" onclick="Export()" title="Click to download pdf">Download PDF</button>
+        </form>
+    </div>
+   
+    <div class="chart">
+        <div class="table-container" id="tblreport">
+            <table>
+                <thead>
+                    <tr>
+                        <label class="heading">{{ fmonth_name }} to {{ tmonth_name }}  EXPORT STONES P &
+                            L AS PER RUNNING COST METHOD for {{ pl_type }} </label>
+                        <th>Date Based On </th>
+                        <th>Month</th>
+                        <th title="Manufacturing Pcs">Pcs</th>
+                        <th title="Manufacturing Cts">Polish Cts</th>
+                        <th title="Raw Material Cost">COGS</th>
+                        <th title="Cost of Producing Goods">Expense</th>
+                        <th title="Total Cost of Producing goods">Production Cost</th>
+                        <th title="Current Rate of Goods">Provisional</th>
+                        <th title="Rate of sold goods">Avg Lock</th>
+                        <th title="Expected total revenue of goods">Total Sales Value</th>
+                        <th title="Final financial Revenue">Net Profit (Loss)</th>
+                        <th title="Final financial revenue in percent">Net Profit (Loss) Margin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="12" style="padding: 8px;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="grandtotal">Grand Total</td>
+                        <td class="Pcs">{{"{:,}" .format(grand_total['Pcs']) }}</td>
+                        <td class="Polish_Cts">{{"{:,}" .format( grand_total['Polish_CTS']) }}</td>
+                        <td class="cogs">{{"{:,}" .format( grand_total['COGS']) }}</td>
+                        <td class="expense">{{"{:,}" .format( grand_total['Expense']) }}</td>
+                        <td class="cost">{{"{:,}" .format( grand_total['Production_cost']) }}</td>
+                        <td class="value">{{"{:,}" .format( grand_total['Provisional']) }}</td>
+                        <td class="value">{{"{:,}" .format( grand_total['Avg_Lock']) }}</td>
+                        <td class="value">{{"{:,}" .format( grand_total['Total_sales_values']) }}</td>
+                        <td class="profit">{{"{:,}" .format( grand_total['Profit']) }}</td>
+                        <td class="percentmargin {% if grand_total['Profit_Percent'] < 0 %}negative{% else %}positive{% endif %}">{{ grand_total['Profit_Percent'] }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="12" style="padding: 8px;"></td>
+                    </tr>
+                    
+                    {% for row in data %}
+                    <tr>
+                        {% if loop.first %}
+                        <td rowspan="{{ unique_months_count }}">Production Month</td>
+                        {% endif %}
+                        <td class="month">{{row.ProdMonth}}</td>
+                        <td class="Pcs">{{"{:,}" .format(row.Pcs) }}</td>
+                        <td class="Polish_Cts">{{"{:,}" .format(row.Polish_CTS) }}</td>
+                        <td class="cogs">{{"{:,}" .format(row.COGS) }}</td>
+                        <td class="expense">{{"{:,}" .format(row.Expensess) }}</td>
+                        <td class="cost">{{"{:,}" .format(row.Production_cost) }}</td>
+                        <td class="value">{{"{:,}" .format(row.Provisional) }}</td>
+                        <td class="value">{{"{:,}" .format(row.Avg_Lock) }}</td>
+                        <td class="value">{{"{:,}".format(row.Total_sales_values) }}</td>
+                        <td class="profit">{{ "{:,}".format(row.Profit) }}</td>
+                        <td class="percentmargin {% if row.Profit_Percent < 0 %}negative{% else %}positive{% endif %}">{{ row.Profit_Percent }}</td>
+                    </tr>
+                    {% endfor %}
+        
+                </tbody>
+            </table><br>
+            <label class="lbl">Note: {{ grand_total['Profit_Percent'] }} Net Profit (Loss) Margin For Production According to
+                RUNNING
+                COST METHOD.</label>
+        </div>
+    </div>
+    <br>
+    <br>
+    
+    <footer>
+        <div class="footer">
+            <div class="pagination">
+                <a href="P_AND_L_REPORT">P & L Report</a>
+                <a href="Articlewise">Rough Type</a>
+                <a href="Export_pl" class="active">Export P & L Report</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+<script>
+
+function showMessage() {
+        var message = "{{ message }}";
+        if (message.trim() !== "") {
+            alert(message);
+            return false;
+        }
+        return true;
+    }
+
+    // JavaScript function to handle month click
+    function redirectToMonthData(event) {
+        var monthId = event.currentTarget.getAttribute('data-id');
+        window.location.href = '/month/' + monthId;
+    }
+
+    // Attach click event listeners after the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        var monthElements = document.querySelectorAll('.month');
+        monthElements.forEach(function (monthElement) {
+            monthElement.addEventListener('click', redirectToMonthData);
+        });
+    });
+
+    // Code for export to pdf
+    function Export() {
+        html2canvas(document.getElementById('tblreport'), {
+            dpi: 200,
+            scale: 1.2,
+            onrendered: function (canvas) {
+                var context = canvas.getContext('2d');
+
+                var data = canvas.toDataURL();
+                var docDefinition = {
+                    content: [{
+                        image: data,
+                        width: 500,
+                        canvasContext: context,
+
+                    }]
+                };
+                pdfMake.createPdf(docDefinition).download("P & L Report.pdf");
+            }
+        });
+    }
+
+
+// Code for export to excel
+    document.getElementById('exportexcel').addEventListener('click', function () {
+        // Get table element
+        var table = document.getElementById('tblreport');
+
+        // Convert table to workbook
+        var wb = XLSX.utils.table_to_book(table);
+
+        // Save workbook to file
+        XLSX.writeFile(wb, 'P & L Report.xlsx');
+    });
+
+
+</script>
+
+</html>

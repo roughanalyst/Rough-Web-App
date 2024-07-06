@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Missing Stone</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            position: sticky;
+            width: 100%;
+            height: 80px;
+            top: 0;
+            background-color: rgb(236, 236, 236);
+            box-shadow: 5px 10px 4px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-left: 44%;
+        }
+
+        img {
+            height: 60px;
+            width: 400px;
+            margin-left: auto;
+        }
+
+        .root {
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            padding: 15px
+        }
+
+        .form {
+            position: sticky;
+            max-width: 600px;
+            /* Limit the width of the form */
+            padding: 20px;
+            /* border: 1px solid #ccc; */
+            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin-left: 33%;
+            z-index: 2;
+        }
+
+        .form input[type="text"] {
+            width: calc(48% - 20px);
+            /* Take up full width minus padding */
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form button {
+            width: calc(38% - 20px);
+            /* Take up full width minus padding */
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #50a74d;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+
+        }
+
+        .form #editItemButton {
+            display: none;
+            background-color: #4d86a7;
+            margin-left: 165px;
+        }
+
+        #searchInput {
+            background-image: url('static/search.png');
+            background-repeat: no-repeat;
+            background-size: 12px;
+            background-position: 8px center;
+            padding-left: 25px;
+            height: 35px;
+            width: calc(50% - 20px);
+            /* Take up full width minus padding */
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .tcontainer {
+            margin: 0 auto;
+            text-align: center;
+            max-width: 90%;
+        }
+
+        /* .table-wrapper {
+        overflow-x: auto;
+        margin: 0 auto; 
+        max-width: 90%; 
+    } */
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 10px;
+            text-align: center;
+            background-color: #f2f2f2;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+
+        td {
+            line-height: 1;
+            padding: 10px;
+            white-space: nowrap;
+            border: 1px solid black;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
+
+        td button {
+            padding: 5px 10px;
+            background-color: #4aa0da;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .zoom {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .zoom:hover {
+            transform: scale(1.1);
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Missing Stone</h1>
+        <img src="/static/kgpng.png" alt="">
+    </div>
+    <div class="root">
+        <div class="form">
+            <div>
+                <h2 id="formTitle">Add Item</h2>
+            </div>
+            <form id="addItemForm">
+                <input type="text" id="lotnoInput" name="lotno" placeholder="Lot No" title="Type in a Lot No"
+                    required />
+                <input type="text" id="pktNoInput" name="pktNo" placeholder="Pkt No" title="Type in a Pkt No"
+                    required />
+                <input type="text" id="mainPktNoInput" name="mainPktNo" placeholder="Main Pkt No"
+                    title="Type in a Main Pkt No" required />
+                <input type="text" id="pcsInput" name="pcs" placeholder="Pcs" title="Type in a Pcs" required>
+                <input type="text" id="ctsInput" name="cts" placeholder="Cts" title="Type in a Cts" required />
+                <input type="text" id="amountInput" name="amount" placeholder="Amount" title="Type in a Amount"
+                    required />
+                <input type="text" id="curr_amountInput" name="curr_amount" placeholder="Curr Amount"
+                    title="Type in a Curr Amount" required />
+                <input type="text" id="levelsInput" name="levels" placeholder="Levels" title="Type in a Levels"
+                    required />
+                <input type="text" id="sublevelInput" name="sublevel" placeholder="SubLevel"
+                    title="Type in a SubLevel" />
+                <input type="text" id="remarkInput" name="remark" placeholder="Remark" title="Type in a Remark" />
+                <button type="button" id="addItemButton" onclick="submitItem()">Add Item</button>
+                <button type="button" id="editItemButton" onclick="editItem()">Update</button>
+            </form>
+        </div>
+
+        <div class="tcontainer">
+            <h2>Search for Item...</h2>
+            <input type="search" id="searchInput" onkeyup="searchItems()"
+                placeholder="Search for Lot No, Pkt No, or Main Pkt No.."
+                title="Type in Lot No, Pkt No, or Main Pkt No" />
+            <div class="table-wrapper">
+                <table id="table">
+                    <tr class="titles">
+                        <th style="width: 5%">Sr.No. </th>
+                        <th style="width: 5%" id="lotno" onclick="sortItems('lotno')">Lot No</th>
+                        <th style="width: 5%" id="pktNo" onclick="sortItems('pktNo')">Pkt No</th>
+                        <th style="width: 5%" id="mainPktNo" onclick="sortItems('mainPktNo')">Main Pkt No</th>
+                        <th style="width: 5%" id="pcs">Pcs</th>
+                        <th style="width: 5%" id="cts">Cts</th>
+                        <th style="width: 5%" id="amount">Amount</th>
+                        <th style="width: 5%" id="curr_amount">Curr Amount</th>
+                        <th style="width: 5%" id="levels">Levels</th>
+                        <th style="width: 5%" id="sublevel">SubLevel</th>
+                        <th style="width: 5%" id="remark">Remark</th>
+                        <th style="width: 5%" id="username">User Name</th>
+                        <th style="width: 5%">Edit Entry</th>
+                        <th style="width: 5%">Delete Entry</th>
+                    </tr>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let data = []; // Array to store data
+
+        // Function to handle form submission (Add item)
+        function submitItem() {
+            // Gather form data
+            const formData = {
+                lotno: document.getElementById("lotnoInput").value,
+                pktNo: document.getElementById("pktNoInput").value,
+                mainPktNo: document.getElementById("mainPktNoInput").value,
+                pcs: document.getElementById("pcsInput").value,
+                cts: document.getElementById("ctsInput").value,
+                amount: document.getElementById("amountInput").value,
+                curr_amount: document.getElementById("curr_amountInput").value,
+                levels: document.getElementById("levelsInput").value,
+                sublevel: document.getElementById("sublevelInput").value,
+                remark: document.getElementById("remarkInput").value
+            };
+
+            // Send POST request to add data to the database
+            fetch('/missing-stones', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to add data to the database');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Assuming server returns the ID of the newly added item
+                    formData.id = data.insertId;
+                    // Add the new item to the data array
+                    data.push(formData);
+                    // Reset the form
+                    document.getElementById("addItemForm").reset();
+                    // Update the table
+                    updateTable();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Function to handle form submission (Edit item)
+        function editItem() {
+            // Gather form data
+            const formData = {
+                id: document.getElementById("itemIdInput").value,
+                lotno: document.getElementById("lotnoInput").value,
+                pktNo: document.getElementById("pktNoInput").value,
+                mainPktNo: document.getElementById("mainPktNoInput").value,
+                pcs: document.getElementById("pcsInput").value,
+                cts: document.getElementById("ctsInput").value,
+                amount: document.getElementById("amountInput").value,
+                curr_amount: document.getElementById("curr_amountInput").value,
+                levels: document.getElementById("levelsInput").value,
+                sublevel: document.getElementById("sublevelInput").value,
+                remark: document.getElementById("remarkInput").value
+            };
+
+            // Send PUT request to update data in the database
+            fetch(`/missing-stones/${formData.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to update data in the database');
+                    }
+                    // Find the index of the item in the data array
+                    const index = data.findIndex(item => item.id === formData.id);
+                    // Update the item in the data array
+                    data[index] = formData;
+                    // Reset the form
+                    document.getElementById("addItemForm").reset();
+                    // Update the table
+                    updateTable();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Function to fetch initial data from the server and populate the table
+        function fetchDataAndPopulateTable() {
+            fetch('/missing-stones')
+                .then(response => response.json())
+                .then(initialData => {
+                    // Populate initial data
+                    data = initialData;
+                    // Update the table
+                    updateTable();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Add event listener for DOMContentLoaded event
+        document.addEventListener('DOMContentLoaded', function () {
+            // Call fetchDataAndPopulateTable when the page is loaded
+            fetchDataAndPopulateTable();
+        });
+
+        // Function to update the table
+        function updateTable() {
+            // Clear existing table content
+            const table = document.getElementById("table");
+            // table.innerHTML = '';
+            fetchDataAndPopulateTable();
+            // Add new data to the table
+            data.forEach((item, index) => {
+                addItem(item, index);
+            });
+        }
+
+        function addItem(e, i) {
+            const table = document.getElementById("table");
+            const row = table.insertRow(i + 1);
+            const cells = ['lotno', 'pktNo', 'mainPktNo', 'pcs', 'cts', 'amount', 'curr_amount', 'levels', 'sublevel', 'remark', 'username'];
+            const serialCell = row.insertCell(0);
+            serialCell.textContent = i + 1;
+
+            cells.forEach((key, j) => {
+                const cell = row.insertCell(j + 1);
+                cell.textContent = e[key];
+            });
+
+            const editCell = row.insertCell(cells.length + 1);
+            const deleteCell = row.insertCell(cells.length + 2);
+            editCell.innerHTML = "✏️";
+            deleteCell.innerHTML = "☒";
+            [editCell, deleteCell].forEach(cell => cell.classList.add("zoom"));
+            editCell.addEventListener("click", () => edit(e, i));
+            deleteCell.addEventListener("click", () => del(e));
+        }
+
+        function del(e) {
+            // Send DELETE request to delete data from the database
+            fetch(`/missing-stones/${e.id}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete data from the database');
+                    }
+                    // Remove the item from the data array
+                    data = data.filter(item => item.id !== e.id);
+                    // Update the table
+                    updateTable();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+        // Call the function to fetch data and populate table when the page is loaded
+        window.onload = fetchDataAndPopulateTable;
+    </script>
+
+</body>
+
+</html>

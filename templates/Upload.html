@@ -1,0 +1,162 @@
+</html><!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload</title>
+    <link rel="stylesheet" href="/static/style.css">
+<style>
+body{
+    background-color: #e9e6e6;
+}
+img{
+    height: 60px;
+    width: 400px;
+    margin-left: auto;
+}
+h1{
+    margin-left: 47%;
+}
+.upload-container {
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 50px;
+    max-width: 400px; /* Adjust as needed */
+    padding: 20px;
+    border: 3px solid #dbdbdb;
+    border-radius: 8px;
+    height: 55vh;
+    box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.1);
+    background-color: rgb(243, 243, 243);
+}
+
+.upload-container h2 {
+    margin-bottom: 30px;
+}
+
+.upload-container select,
+.upload-container input[type="file"],
+.upload-container input[type="submit"] {
+    width: 80%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.upload-container select {
+    margin-bottom: 20px;
+    padding: 12px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    font-size: 16px;
+    color: black;
+}
+
+.upload-container input[type="file"] {
+    cursor: pointer;
+}
+
+.upload-container input[type="submit"] {
+    background-color: #1fa0d3;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    /* margin-left: 40px */
+}
+
+.upload-container footer {
+    margin-top: 18px;
+    font-style: italic;
+    font-size: 18px;
+}
+
+.success-message {
+    color: green;
+}
+
+.error-message {
+    color: red;
+}
+
+    </style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#file').change(function() {
+            var file_data = $('#file')[0].files[0];
+            var form_data = new FormData();
+            form_data.append('file', file_data);
+            $.ajax({
+                url: '/get_sheets',
+                type: 'POST',
+                data: form_data,
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    var sheets = data.sheets;
+                    var options = '';
+                    for (var i = 0; i < sheets.length; i++) {
+                        options += '<option value="' + sheets[i] + '">' + sheets[i] + '</option>';
+                    }
+                    $('#sheet').html(options);
+                }
+            });
+        });
+
+        $.ajax({
+            url: '/get_tables',
+            type: 'POST',
+            success: function(data) {
+                var tables = data.tables;
+                var options = '';
+                for (var i = 0; i < tables.length; i++) {
+                    options += '<option value="' + tables[i] + '">' + tables[i] + '</option>';
+                }
+                $('#table').html(options);
+            }
+        });
+
+    });
+</script>
+
+</head>
+<body>
+
+        <div class="container">
+            <h1>Upload</h1>
+            <a href="home" class="back-link">Back</a>
+            <img src="/static/kgpng.png" alt="">
+        </div>
+
+     <div class="upload-container">
+        <h2></h2>
+        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+
+            <label for="file">Choose Excel File:</label>
+            <input type="file" id="file" name="file" accept=".xlsx">
+            <br><br>
+            <label for="sheet">Select Sheet:</label>
+            <select id="sheet" name="sheet">
+                <!-- Sheet options will be populated dynamically using JavaScript -->
+            </select>
+            <br><br>
+            <label for="table">Select Table:</label>
+            <select id="table" name="table">
+                <!-- Table options will be populated dynamically using JavaScript -->
+            </select>
+            <br><br>
+            <input type="submit" value="Upload">
+        </form>
+        <footer>
+            {% if message %}
+                <p class="{{ 'success-message' if 'success' in message.lower() else 'error-message' }}">{{ message }}</p>
+            {% endif %}
+        </footer>
+    </div>
+
+    
+</body>
+</html>

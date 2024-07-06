@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stonewise Production Data</title>
+    <link rel="stylesheet" href="/static/data.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+   
+</head>
+
+<body>
+    <div class="headcontainer">
+
+        <h1>Stonewise Production of {{ display_month_stonewise }}</h1>
+        <!-- <a href="/P_AND_L_REPORT" class="back-link">Back</a> -->
+        <img src="/static/kgpng.png" alt="">
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>PROD_MONTH</th>
+                    <th>IO DATE</th>
+                    <th>LOTNO</th>
+                    <th>DISP LOTNO</th>
+                    <th>Article</th>
+                    <th>MAIN PKTNO</th>
+                    <th>PKTNO</th>
+                    <th>TAG</th>
+                    <th>CTS</th>
+                    <th>STONE ID</th>
+                    <th>STATUS</th>
+                    <th>SHAPE</th>
+                    <th>COLOR</th>
+                    <th>CLARITY</th>
+                    <th>CUT</th>
+                    <th>FLOURSCENCE</th>
+                    <th>TOT MONTH VALUE</th>
+                    <th>PERCENTAGE</th>
+                    <th>MONTHLY EXPENSES</th>
+                    <th>PL LOT GRP</th>
+                    <th>Overall Cost</th>
+                    <th>Running Percent</th>
+                    <th>VALUE STATUS</th>
+                    <th>AVG LOCK VALUE</th>
+                    <th>PROVISIONAL LOCK VALUE</th>
+                    <th>DIFF VALUE</th>
+                    <th>EXPENSES</th>
+                    <th>TOT PKT VALUE</th>
+                    <th>COGS</th>
+                    <th>Production Cost</th>
+                    <th>Profit</th>
+                    <th>Profit Margin</th>
+                </tr>
+            </thead>
+            <tbody id="table">
+                {% for row in month_data %}
+                <tr>
+                    {% for item in row %}
+                    <td>{{ item }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</body>
+<footer>
+    <div class="footer">
+        <div class="pagination">
+            <a href="#" id="prev">&laquo;</a>
+                <a href="#" class="page-link" data-page="1">1</a>
+                <a href="#" class="page-link" data-page="2">2</a>
+                <a href="#" class="page-link" data-page="3">3</a>
+                <a href="#" class="page-link" data-page="4">4</a>
+                <a href="#" class="page-link" data-page="5">5</a>
+                <a href="#" id="next">&raquo;</a>
+        </div>
+    </div>
+</footer>
+
+</html>

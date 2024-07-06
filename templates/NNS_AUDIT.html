@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NNS AUDIT</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="/static/nnsaudit.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>NNS AUDIT</h1>
+        <a href="home" class="back-link">Back</a>
+        <!-- <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="btnusername" title="Click to logout">{{username}}</button>
+        </form>   -->
+        <img src="/static/kgpng.png" alt="">
+        <br>
+    </div>
+
+    <div class="box">
+        <form method="post" class="form_">
+            <label for="apply_lotno">LOTNO : </label>
+            <select name="apply_lotno">
+                <option value="">-- Select LOTNO --</option>
+                {% for lotno in lotnos %}
+                <option value="{{ lotno }}">{{ lotno }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Apply" id="apply_lotno">
+        </form>
+
+        <div class="oldavg" title="This is old Avg">
+            <label for="average">Average : {{ avg_mpm_pd_value }}</label>
+            <label for="average">Current Average : {{ curr_pd_value }}</label>
+        </div>
+
+        <div class="newavg" title="This is new Avg">
+            <label for="average">New Average : {{ new_avg_mpm_pd }}</label>
+            <label for="average">New Current Average : {{ new_curr_pd }}</label>
+        </div>
+
+    </div>
+
+    <div class="table-container">
+        <table id="mytable">
+            <thead>
+                <tr>
+                    {% for column in column_names %}
+                    <th>
+                        <div class="resize">{{ column }}</div>
+                        <div class="filter"></div>
+                    </th>
+                    {% endfor %}
+
+                    <th>Action
+                        <div class="filter"></div>
+                    </th>
+                    <th>
+                        <div class="resize">Diff</div>
+                        <div class="filter"></div>
+                    </th>
+                    <th>
+                        <div class="resize">Diff %</div>
+                        <div class="filter"></div>
+                    </th>
+                    <th>
+                        <div class="resize">Curr Diff</div>
+                        <div class="filter"></div>
+                    </th>
+                    <th>
+                        <div class="resize">Curr Diff %<span class="material-symbols-outlined">filter_alt</span></div>
+                        <div class="filter"></div>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in table_data %}
+                <tr>
+                    {% set index = 0 %}
+                    {% for value in row %}
+                    {% if loop.index == 1 %}
+                    <td id="lotno">{{ value }}</td>
+                    {% elif loop.index == 2 %}
+                    <td id="pktno">{{ value }}</td>
+                    {% elif loop.index == 5 %}
+                    <td id="tag">{{ value }}</td>
+                    {% elif loop.index == 13 %}
+                    <td id="cts">{{ value }}</td>
+                    {% elif loop.index == 45 %}
+                    <td id="show1">{{ value }}</td>
+                    {% elif loop.index == 49 %}
+                    <td id="show2">{{ value }}</td>
+                    {% elif loop.index == row|length - 2 %}
+                    <td contenteditable="true" oninput="validateNumber(event)" id="edit1">{{ value }}</td>
+                    {% elif loop.index == row|length - 1 %}
+                    <td contenteditable="true" oninput="validateNumber(event)" id="edit2">{{ value }}</td>
+                    {% elif loop.index == row|length %}
+                    <td id="flag">{{ value }}</td>
+                    {% else %}
+                    <td>{{ value }}</td>
+                    {% endif %}
+                    {% set index = index + 1 %}
+                    {% endfor %}
+                    <td><button class="update-btn" onclick="updateValues(this)">Update</button></td>
+                    {% if row|length >= 62 %}
+                    <td>
+                        {% if row[61] is not none and row[38] is not none %}
+                        <span
+                            class="{% if (row[61] - row[38]) > 500 %} high-value {% elif (row[61] - row[38]) < -500 %} low-value {% endif %}">
+                            {{ '%.2f' % (row[61] - row[38]) }}
+                        </span>
+
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row[38] is not none and row[61] is not none %}
+                        {% if row[38] != 0 %}
+                        <span
+                            class="{% if (((row[61] - row[38]) / row[38]) * 100) > 10 %} high-value {% elif (((row[61] - row[38]) / row[38]) * 100) < -10 %} low-value {% endif %}">
+                            {{ '%.2f' % (((row[61] - row[38]) / row[38]) * 100) }}
+                        </span>
+                        {% else %}
+                        #DIV/0!
+                        {% endif %}
+
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row[62] is not none and row[61] is not none %}
+                        <span
+                            class="{% if (row[62] - row[61]) > 500 %} high-value {% elif (row[62] - row[61]) < -500 %} low-value {% endif %}">
+                            {{ '%.2f' % (row[62] - row[61]) }}
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row[62] is not none and row[61] is not none %}
+                        {% if row[61] != 0 %}
+                        <span
+                            class="{% if (((row[62] - row[61]) / row[61]) * 100) > 10 %} high-value {% elif (((row[62] - row[61]) / row[61]) * 100) < -10 %} low-value {% endif %}">
+                            {{ '%.2f' % (((row[62] - row[61]) / row[61]) * 100) }}
+                        </span>
+                        {% else %}
+                        #DIV/0!
+                        {% endif %}
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+<footer>
+    <div class="footer">
+        <div class="pagination">
+            <a href="#">&laquo;</a>
+            <a href="NNS_AUDIT" class="active">NNS AUDIT</a>
+            <a href="pcs">PCS</a>
+            <a href="live">LIVE</a>
+            <a href="#">&raquo;</a>
+        </div>
+        <button style="margin-right: 10px;" class="done" type="submit" title="Click to update portfolio"
+            onclick="threeplusshow()">Done</button>
+        <button id="exportToExcel" type="submit" title="Click to export excel file">Export To Excel</button>
+        <!-- <button type="reset" id="clearFilterBtn">Clear Filter</button> -->
+    </div>
+</footer>
+
+<script>
+    // Validate Number Input
+    function validateNumber(event) {
+        var input = event.target.textContent.trim();
+        if (input.match(/[a-zA-Z]/)) { // Check if input contains alphabets
+            alert("Please enter a valid number");
+            event.target.textContent = '0'; // Clear the input
+        }
+    }
+
+    document.querySelectorAll('.number-input').forEach(element => {
+        element.addEventListener('input', validateNumber);
+    });
+
+    // Export Table to Excel
+    document.getElementById('exportToExcel').addEventListener('click', function () {
+        var wb = XLSX.utils.table_to_book(document.querySelector('table'));
+        XLSX.writeFile(wb, 'NNS Audit.xlsx');
+    });
+
+    // Update Values via AJAX
+    function updateValues(button) {
+        var row = $(button).closest('tr');
+        var lotno = row.find('#lotno').text();
+        var pktno = row.find('#pktno').text();
+        var tag = row.find('#tag').text();
+        var avg = row.find('#edit1').text();
+        var curr = row.find('#edit2').text();
+        var flag = row.find('#flag').text();
+
+        $.ajax({
+            url: '/update_audit_nns',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                lotno: lotno,
+                pktno: pktno,
+                tag: tag,
+                edit1: avg,
+                edit2: curr,
+                flag: flag
+            }),
+            success: function (response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert('Error occurred while updating values: ' + error);
+            }
+        });
+    }
+
+    // Show Rows with Specific Conditions
+    function threeplusshow() {
+        var rows = document.querySelectorAll("#mytable tbody tr");
+        var rowCount = 0;
+
+        rows.forEach(function (row) {
+            var lotno = row.querySelector('#lotno').innerHTML;
+            var pktno = row.querySelector("#pktno").innerHTML;
+            var tag = row.querySelector('#tag').innerHTML;
+            var cts = parseFloat(row.querySelector('#cts').innerHTML);
+            var flag = parseInt(row.querySelector('#flag').innerHTML);
+
+            if (cts >= 3 && flag === 0) {
+                // row.style.display = 'table-row';
+                rowCount++;
+            } else {
+                // row.style.display = 'none';
+            }
+        });
+
+        if (rowCount > 0) {
+            alert("Please Check 3 CTS Stone");
+            alert("Here Number of " + rowCount + " Rows Has been Founded in this Lot");
+        } else {
+            var lotno = document.querySelector('#lotno').innerHTML;
+            $.ajax({
+                url: '/update_portfolio',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    lotno: lotno,
+                }),
+                success: function (response) {
+                    alert("Successfully Updated..🥳😇!");
+                    alert(response.message);
+                    window.location.href = '/portfolio';
+                    updatePortfolioPage(response.updated_row, response.column_names);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error occurred while updating portfolio: ' + error);
+                }
+            });
+        }
+    }
+
+    // Javascript code for filter
+    $(document).ready(function () {
+        // Event handler for column header click
+        $("#mytable th").click(function () {
+            showFilterOption(this);
+        });
+
+        // Event handler to hide filter grid when clicking outside
+        $(document).click(function (event) {
+            if (!$(event.target).closest("#mytable th").length) {
+                $(".filter").hide();
+            }
+        });
+    });
+
+    // Object to map checkbox indices to table rows
+    var arrayMap = {};
+    function showFilterOption(tdObject) {
+        var filterGrid = $(tdObject).find(".filter");
+
+        if (filterGrid.is(":visible")) {
+            filterGrid.hide();
+            return;
+        }
+
+        $(".filter").hide();
+
+        var index = 0;
+        filterGrid.empty();
+        var allSelected = true;
+        filterGrid.append('<div class="sort"><label id="sortasc">Sort A to Z</label></div>')
+        filterGrid.append('<div class="sort"><label id="sortdesc">Sort Z to A</label></div>')
+        filterGrid.append('<div class="colorfilter"><label id="redcolor">Filter by Color</label></div>')
+        filterGrid.append('<div class="searchinput"><input id="searchInput" type="text" placeholder="Search..."></div>');
+        filterGrid.append('<div><input id="all" type="checkbox" style="width: 10% !important" checked>All</div>');
+
+        var $rows = $(tdObject).closest("table").find("tr");
+        var values = [];
+
+        $rows.each(function (ind, ele) {
+            if (ind > 0) {
+                var currentTd = $(ele).children().eq($(tdObject).index());
+                if (!values.includes(currentTd.text())) {
+                    values.push(currentTd.text());
+                    var div = $('<div class="grid-item"></div>');
+                    var str = $(ele).is(":visible") ? "checked" : "";
+                    if ($(ele).is(":hidden")) {
+                        allSelected = false;
+                    }
+                    div.append('<br><input type="checkbox" ' + str + ' >' + currentTd.text());
+                    filterGrid.append(div);
+                    arrayMap[index] = ele; // Mapping checkbox index to table row
+                    index++;
+                }
+            }
+        });
+
+        if (!allSelected) {
+            filterGrid.find("#all").prop("checked", false);
+        }
+
+        filterGrid.append('<div class="filterbtn" style="text-align: center"><input id="close" type="button" value="Close" style="width: 40%"/><input id="ok" type="button" value="Ok" style="width: 40%"/></div>');
+        filterGrid.show();
+
+        var $closeBtn = filterGrid.find("#close");
+        var $okBtn = filterGrid.find("#ok");
+        var $checkElems = filterGrid.find("input[type='checkbox']");
+        var $gridItems = filterGrid.find(".grid-item");
+        var $all = filterGrid.find("#all");
+        var $searchInput = filterGrid.find("#searchInput");
+        var $sortAscLabel = filterGrid.find("#sortasc");
+        var $sortDescLabel = filterGrid.find("#sortdesc");
+        var $redColorLabel = filterGrid.find("#redcolor");
+
+        $closeBtn.click(function () {
+            filterGrid.hide();
+            return false;
+        });
+
+        $okBtn.click(function () {
+            // Show/hide rows based on checkbox selection
+            filterGrid.find(".grid-item input[type='checkbox']").each(function (ind, ele) {
+                var isChecked = $(ele).is(":checked");
+                if (isChecked) {
+                    $(arrayMap[ind]).show();
+                } else {
+                    $(arrayMap[ind]).hide();
+                }
+            });
+            filterGrid.hide();
+            return false;
+        });
+
+        $sortAscLabel.click(function () {
+            // Sort rows in ascending order
+            var columnIdx = $(tdObject).index();
+            var rows = Object.values(arrayMap);
+            rows.sort(function (a, b) {
+                var textA = $(a).children().eq(columnIdx).text().toUpperCase();
+                var textB = $(b).children().eq(columnIdx).text().toUpperCase();
+                return textA.localeCompare(textB);
+            });
+            // Reorder rows in the table
+            $(tdObject).closest("table").find("tbody").empty().append(rows);
+        });
+
+        $sortDescLabel.click(function () {
+            // Sort rows in descending order
+            var columnIdx = $(tdObject).index();
+            var rows = Object.values(arrayMap);
+            rows.sort(function (a, b) {
+                var textA = $(a).children().eq(columnIdx).text().toUpperCase();
+                var textB = $(b).children().eq(columnIdx).text().toUpperCase();
+                return textB.localeCompare(textA);
+            });
+            // Reorder rows in the table
+            $(tdObject).closest("table").find("tbody").empty().append(rows);
+        });
+
+        $redColorLabel.click(function () {
+            // Show only rows with red background color in the specified column
+            var columnIdx = $(tdObject).index();
+            $rows.each(function (ind, ele) {
+                if (ind > 0) {
+                    var currentTd = $(ele).children().eq(columnIdx);
+                    var bgColor = currentTd.css("background-color");
+                    if (bgColor === "rgb(255, 204, 204)") { // Check for red color
+                        $(ele).show();
+                    } else {
+                        $(ele).hide();
+                    }
+                }
+            });
+        });
+
+        $checkElems.click(function (event) {
+            event.stopPropagation();
+        });
+
+        $gridItems.click(function (event) {
+            // Toggle checkbox when clicking on grid item
+            var chk = $(this).find("input[type='checkbox']");
+            chk.prop("checked", !chk.is(":checked"));
+        });
+
+        $all.change(function () {
+            // Check/uncheck all checkboxes
+            var chked = $(this).is(":checked");
+            filterGrid.find(".grid-item [type='checkbox']").prop("checked", chked);
+        });
+
+        $searchInput.on('input', function () {
+            var searchText = $(this).val().toLowerCase();
+            filterGrid.find(".grid-item").each(function () {
+                var rowText = $(this).text().toLowerCase();
+                if (rowText.includes(searchText)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        filterGrid.click(function (event) {
+            event.stopPropagation();
+        });
+
+        return filterGrid;
+    }
+
+    // Javascript code for Clear Filter
+    document.addEventListener("DOMContentLoaded", function () {
+        var clearFilterBtn = document.getElementById("clearFilterBtn");
+
+        clearFilterBtn.addEventListener("click", function () {
+            resetFilter();
+        });
+
+        // Function to reset filter
+        function resetFilter() {
+            var tableRows = document.querySelectorAll("#mytable tbody tr");
+            tableRows.forEach(function (row) {
+                row.style.display = ""; // Show all rows
+            });
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let currentCell = document.querySelector("#myTable td");
+        if (currentCell) {
+            currentCell.classList.add("current");
+        }
+
+        document.addEventListener("keydown", function (event) {
+            if (!currentCell) return;
+
+            let nextCell;
+            switch (event.key) {
+                case "ArrowRight":
+                    nextCell = currentCell.nextElementSibling;
+                    break;
+                case "ArrowLeft":
+                    nextCell = currentCell.previousElementSibling;
+                    break;
+                case "ArrowDown":
+                    let currentRow = currentCell.parentElement;
+                    let nextRow = currentRow.nextElementSibling;
+                    if (nextRow) {
+                        nextCell = nextRow.children[currentCell.cellIndex];
+                    }
+                    break;
+                case "ArrowUp":
+                    let prevRow = currentCell.parentElement.previousElementSibling;
+                    if (prevRow) {
+                        nextCell = prevRow.children[currentCell.cellIndex];
+                    }
+                    break;
+                default:
+                    return;
+            }
+
+            if (nextCell && nextCell.tagName === "TD") {
+                currentCell.classList.remove("current");
+                nextCell.classList.add("current");
+                currentCell = nextCell;
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        // Enable arrow key navigation for grid cells
+        $('input').keydown(function (e) {
+            var $this = $(this);
+            var index = $this.closest('td').index();
+            var $row = $this.closest('tr');
+            var rowIndex = $row.index();
+            var numRows = $row.parent().children('tr').length;
+
+            switch (e.which) {
+                case 37: // Left Arrow
+                    if (index > 0) {
+                        $row.children().eq(index - 1).find('input').focus();
+                    }
+                    break;
+                case 39: // Right Arrow
+                    if (index < $row.children().length - 1) {
+                        $row.children().eq(index + 1).find('input').focus();
+                    }
+                    break;
+                case 38: // Up Arrow
+                    if (rowIndex > 0) {
+                        $row.prev().children().eq(index).find('input').focus();
+                    }
+                    break;
+                case 40: // Down Arrow
+                    if (rowIndex < numRows - 1) {
+                        $row.next().children().eq(index).find('input').focus();
+                    }
+                    break;
+            }
+        });
+    });
+</script>
+
+</html>

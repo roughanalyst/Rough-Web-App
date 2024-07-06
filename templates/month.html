@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Month Wise Production</title>
+    <link rel="stylesheet" href="/static/data.css">
+</head>
+<body>
+    <div class="headcontainer">
+
+    <a href="/P_AND_L_REPORT" class="back-link">Back</a>
+    <!-- <h3>Select Month From {{ display_from_month }} To {{ display_to_month }}</h3> -->
+</div>
+<div class="month"> 
+    <ul>
+        {% for item in month_items %}
+            <li><a href="/month/{{ item[1] }}">{{ item[0] }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+
+
+</body>
+</html>

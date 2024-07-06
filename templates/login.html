@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Page</title>
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: Arial, sans-serif;
+        background-color: black;
+    }
+
+    .container {
+        display: flex;
+        height: 100%;
+
+    }
+
+    .left-side {
+        background-color: black;
+        background-image: url('/static/logo.png');
+        background-repeat: no-repeat;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-size: 500px;
+        background-position: center;
+        flex: 1;
+    }
+
+    .right-side {
+        flex: 1;
+        background-color: rgba(247,247,247,255);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-repeat: no-repeat;
+        background-image: url('/static/dlogin.JPG');
+        background-position: center top 150px;
+        background-size: 200px;
+        border-top-left-radius: 10%;
+        border-bottom-left-radius: 10%;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+
+    .right-side input[type="text"],
+    .right-side input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #000000;
+        font-family: Arial, sans-serif;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .right-side button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #1fa0d3;
+        color: white;
+        justify-content: center;
+        font-family: 'Times New Roman', Times, serif;
+        background-position: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .right-side button:hover {
+        background-color: #072f5c;
+    }
+
+    .right-side h2 {                
+        text-align: center;
+        font: size 50%;
+        text-decoration: underline;
+        /* background-color: #1fa0d3; */
+    }
+
+    p{
+        color: red;
+    }
+
+</style>
+
+<script>
+    function upperCase() {
+        const x = document.getElementById("uid")
+        x.value = x.value.toUpperCase();
+    }
+
+    
+</script>
+</head>
+<body>
+    <div class="container">
+        <div class="left-side"></div>
+        <div class="right-side">
+            <div class="login-form">
+                <h2>Login</h2>
+                <form action="/login" method="post">
+                    <input type="text" name="username" placeholder="Username" required id="uid" onchange="upperCase()" title="Enter your user_id">
+                    <input type="password" name="password" required placeholder="Password" ID="pass" title="Enter your Password">
+                    <button type="submit">Login</button>
+                    
+                </form>
+                {% if message %}
+                <p>{{ message }}</p>
+                {% endif %}
+            </div>
+        </div>
+       
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Month Wise Production</title>
+    <link rel="stylesheet" href="/static/reports.css">
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-style@0.8.13/dist/xlsx-style.min.js"></script>
+
+</head>
+
+<body>
+    <div class="container">
+        <form method="post" action="#" class="form" id="monthform">
+            <label for="fMonth">From : </label>
+            <input type="month" id="fMonth" name="fMonth" title="From Month">
+
+            <label for="toMonth">To : </label>
+            <input type="month" id="toMonth" name="toMonth" title="To Month">
+    
+            <input type="submit" id="submitBtn" value="Submit">
+        </form>
+        <h1 class="h1_article">Article Wise P & L Report</h1>
+        <img src="/static/kgpng.png" alt="">
+        <br>
+    </div>
+
+    <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="chart">
+        <div class="articletbl" id="tblreport">
+            <table>
+                <thead>
+                    <tr>
+                        <label class="heading">{{ fmonth_name }} TO {{ tmonth_name }} PRODUCTION ROUGH TYPE WISE P & L AS PER RUNNING COST METHOD</label>
+                        <th>Rough Type </th>
+                        <th class="pcscol" title="Manufacturing Pcs">Pcs</th>
+                        <th class="ctscol" title="Manufacturing Cts">Polish Cts</th>
+                        <th class="cogscol" title="Raw Material Cost">COGS</th>
+                        <th class="expcol" title="Cost of Producing Goods">Manufacturing Expense</th>
+                        <th class="procol" title="Total Cost of Producing goods">Production Cost</th>
+                        <th class="salescol" title="Rate of sold goods">Sales Lock AVG Value</th>
+                        <th class="netplcol" title="Final financial Revenue">Net P & L</th>
+                        <th class="margincol" title="Final financial revenue margin">P & L Margin</th>
+                        <th class="absvlcol" title="Absolute Difference Value">ABS DIFF Value</th>
+                        <th class="abswtgcol" title="Absolute Difference Weightage">ABS DIFF WTG%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if grand_total %}
+                    <tr class="gtotal">
+                        <td>Grand Total</td>
+                        <td>{{ "{:,}".format(grand_total['Pcs']) }}</td>
+                        <td>{{ "{:,}".format(grand_total['Polish_CTS']) }}</td>
+                        <td>{{ "{:,}".format(grand_total['COGS']) }}</td>
+                        <td>{{ "{:,}".format(grand_total['Expensess']) }}</td>
+                        <td>{{ "{:,}".format(grand_total['Production_cost']) }}</td>
+                        <td>{{ "{:,}".format(grand_total['Total_sales_values']) }}</td>
+                        <td>{{ "{:,}".format(grand_total['Profit']) }}</td>
+                        <td>{{ grand_total['Profit_Percent'] }}</td>
+                        <td>{{ "{:,}".format(grand_total['ABS_DIFF_VALUE']) }}</td>
+                        <td>{{ "100%" }}</td>
+                    </tr>
+                    {% endif %}
+                    <!-- ------------------------------------------------------------------ -->
+                    <tr>
+                        <td colspan="11" style="height: 25px;"></td>
+                    </tr>
+                    {% if data_dtc %}
+                    <tr class="dtctotal">
+                        <td>DTC</td>
+                        <td>{{ "{:,}".format(total_row_dtc['Pcs']) }}</td>
+                        <td>{{ "{:,}".format(total_row_dtc['Polish_CTS']) }}</td>
+                        <td>{{ "{:,}".format(total_row_dtc['COGS']) }}</td>
+                        <td>{{ "{:,}".format(total_row_dtc['Expensess']) }}</td>
+                        <td>{{ "{:,}".format(total_row_dtc['Production_cost']) }}</td>
+                        <td>{{ "{:,}".format(total_row_dtc['Total_sales_values']) }}</td>
+                        <td>{{ "{:,}".format(total_row_dtc['Profit']) }}</td>
+                        <td class="plmargin">{{ total_row_dtc['Profit_Percent'] }}</td>
+                        <td>{{ "{:,}".format(total_row_dtc['ABS_DIFF_VALUE']) }}</td>
+                        <td>{{ "{:.0f}%".format((total_row_dtc['ABS_DIFF_VALUE'] / grand_total['ABS_DIFF_VALUE']) * 100) }}</td>
+                    </tr>
+                    {% for row in data_dtc %}
+                    <tr class="valueofdtc">
+                        <td class="articlename">{{ row['DTC'] }}</td>
+                        <td>{{ "{:,}".format(row['Pcs']) }}</td>
+                        <td>{{ "{:,}".format(row['Polish_CTS']) }}</td>
+                        <td>{{ "{:,}".format(row['COGS']) }}</td>
+                        <td>{{ "{:,}".format(row['Expensess']) }}</td>
+                        <td>{{ "{:,}".format(row['Production_cost']) }}</td>
+                        <td>{{ "{:,}".format(row['Total_sales_values']) }}</td>
+                        <td>{{ "{:,}".format(row['Profit']) }}</td>
+                        <td class="plmargin">{{ row['Profit_Percent'] }}</td>
+                        <td>{{ "{:,}".format(row['ABS_DIFF_VALUE']) }}</td>
+                        <td class="wtgpercent">{{ "{:.0f}%".format((row['ABS_DIFF_VALUE'] / grand_total['ABS_DIFF_VALUE']) * 100) }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                    
+                     <!-- ------------------------------------------------------------------ -->
+                    <tr>
+                        <td colspan="11" style="height: 25px;"></td>
+                    </tr>
+                    {% if data_non_dtc %}
+                    <tr class="nondtctotal">
+                        <td>NON DTC</td>
+                        <td>{{ "{:,}".format(total_row_non_dtc['Pcs']) }}</td>
+                        <td>{{ "{:,}".format(total_row_non_dtc['Polish_CTS']) }}</td>
+                        <td>{{ "{:,}".format(total_row_non_dtc['COGS']) }}</td>
+                        <td>{{ "{:,}".format(total_row_non_dtc['Expensess']) }}</td>
+                        <td>{{ "{:,}".format(total_row_non_dtc['Production_cost']) }}</td>
+                        <td>{{ "{:,}".format(total_row_non_dtc['Total_sales_values']) }}</td>
+                        <td>{{ "{:,}".format(total_row_non_dtc['Profit']) }}</td>
+                        <td class="plmargin">{{ total_row_non_dtc['Profit_Percent'] }}</td>
+                        <td>{{ "{:,}".format(total_row_non_dtc['ABS_DIFF_VALUE']) }}</td>
+                        <td>{{ "{:.0f}%".format((total_row_non_dtc['ABS_DIFF_VALUE'] / grand_total['ABS_DIFF_VALUE']) * 100) }}</td>
+                    </tr>
+                    {% for row in data_non_dtc %}
+                    <tr class="valueofnondtc">
+                        <td class="articlename">{{ row['NON_DTC'] }}</td>
+                        <td>{{ "{:,}".format(row['Pcs']) }}</td>
+                        <td>{{ "{:,}".format(row['Polish_CTS']) }}</td>
+                        <td>{{ "{:,}".format(row['COGS']) }}</td>
+                        <td>{{ "{:,}".format(row['Expensess']) }}</td>
+                        <td>{{ "{:,}".format(row['Production_cost']) }}</td>
+                        <td>{{ "{:,}".format(row['Total_sales_values']) }}</td>
+                        <td>{{ "{:,}".format(row['Profit']) }}</td>
+                        <td class="plmargin">{{ row['Profit_Percent'] }}</td>
+                        <td>{{ "{:,}".format(row['ABS_DIFF_VALUE']) }}</td>
+                        <td class="wtgpercent">{{ "{:.0f}%".format((row['ABS_DIFF_VALUE'] / grand_total['ABS_DIFF_VALUE']) * 100) }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+
+                    <!-- ------------------------------------------------------------------ -->
+                     <tr>
+                        <td colspan="11" style="height: 25px;"></td>
+                    </tr>
+                    {% if data_single %}
+                    <tr class="singletotal">
+                        <td>Singles</td>
+                        <td>{{ "{:,}".format(total_row_single['Pcs']) }}</td>
+                        <td>{{ "{:,}".format(total_row_single['Polish_CTS']) }}</td>
+                        <td>{{ "{:,}".format(total_row_single['COGS']) }}</td>
+                        <td>{{ "{:,}".format(total_row_single['Expensess']) }}</td>
+                        <td>{{ "{:,}".format(total_row_single['Production_cost']) }}</td>
+                        <td>{{ "{:,}".format(total_row_single['Total_sales_values']) }}</td>
+                        <td>{{ "{:,}".format(total_row_single['Profit']) }}</td>
+                        <td class="plmargin">{{ total_row_single['Profit_Percent'] }}</td>
+                        <td>{{ "{:,}".format(total_row_single['ABS_DIFF_VALUE']) }}</td>
+                        <td>{{ "{:.0f}%".format((total_row_single['ABS_DIFF_VALUE'] / grand_total['ABS_DIFF_VALUE']) * 100) }}</td>
+                    </tr>
+                    {% for row in data_single %}
+                    <tr class="valueofsingle">
+                        <td class="articlename">{{ row['Single'] }}</td>
+                        <td>{{ "{:,}".format(row['Pcs']) }}</td>
+                        <td>{{ "{:,}".format(row['Polish_CTS']) }}</td>
+                        <td>{{ "{:,}".format(row['COGS']) }}</td>
+                        <td>{{ "{:,}".format(row['Expensess']) }}</td>
+                        <td>{{ "{:,}".format(row['Production_cost']) }}</td>
+                        <td>{{ "{:,}".format(row['Total_sales_values']) }}</td>
+                        <td>{{ "{:,}".format(row['Profit']) }}</td>
+                        <td class="plmargin">{{ row['Profit_Percent'] }}</td>
+                        <td>{{ "{:,}".format(row['ABS_DIFF_VALUE']) }}</td>
+                        <td class="wtgpercent">{{ "{:.0f}%".format((row['ABS_DIFF_VALUE'] / grand_total['ABS_DIFF_VALUE']) * 100) }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table> 
+
+            <label class="lbl"><p><b>Note:&nbsp;&nbsp;{{ grand_total['Profit_Percent'] }}Net P & L{{ fmonth_name }} to {{ tmonth_name }}  Production Stones.</b></p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{{ total_row_dtc['Profit_Percent'] }} Net P & L for DTC Lot's {{ fmonth_name }} to {{ tmonth_name }}  Production Stones.</b></p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{{ total_row_non_dtc['Profit_Percent'] }} Net P & L for NON DTC Lot's {{ fmonth_name }} to {{ tmonth_name }}  Production Stones.</b></p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{{ total_row_single['Profit_Percent'] }} Net P & L for SINGLE Lot's {{ fmonth_name }} to {{ tmonth_name }}  Production Stones.</b></p>
+            </label>
+        </div>
+    </div>
+</body>
+<footer>
+    <div class="footer">
+        <div class="pagination">
+            <a href="P_AND_L_REPORT">P & L Report</a>
+            <a href="Articlewise" class="active">Rough Type</a>
+            <a href="Export_pl">Export P & L Report</a>
+        </div>
+
+        <button id="exportexcel" type="button" class="articleexcel" title="Click to Export to excel">Export to
+            excel</button>
+        <button id="articlepdf" class="articlepdf" type="button" onclick="Export()" title="Click to download pdf">Download PDF</button>
+    </div>
+</footer>
+</body>
+<script>
+    
+ // Show preloader on form submit
+ document.getElementById('monthform').addEventListener('submit', function() {
+            document.getElementById('preloader').style.display = 'block';
+        });
+
+        // Hide preloader when page is fully loaded
+        window.addEventListener('load', function() {
+            document.getElementById('preloader').style.display = 'none';
+        });
+
+// Code for export to excel
+document.getElementById('exportexcel').addEventListener('click', function () {
+        // Get table element
+        var table = document.getElementById('tblreport');
+
+        // Convert table to workbook
+        var wb = XLSX.utils.table_to_book(table);
+
+        // Save workbook to file
+        XLSX.writeFile(wb, 'Articlewise P & L.xlsx');
+    });
+
+// Code for export to pdf
+    function Export() {
+        html2canvas(document.getElementById('tblreport'), {
+            dpi: 200,
+            scale: 1.2,
+            onrendered: function (canvas) {
+                var context = canvas.getContext('2d');
+
+                var data = canvas.toDataURL();
+                var docDefinition = {
+                    content: [{
+                        image: data,
+                        width: 500,
+                        canvasContext: context,
+                    }]
+                };
+                pdfMake.createPdf(docDefinition).download("Articlewise P & L.pdf");
+            }
+        });
+    }
+</script>
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+    // Get all elements with class 'plmargin'
+    var plmarginCells = document.getElementsByClassName('plmargin');
+    
+    for (var i = 0; i < plmarginCells.length; i++) {
+        var cell = plmarginCells[i];
+        var plmarginValue = parseFloat(cell.textContent);
+
+        // Determine the background color based on the plmargin value
+        var bgColor = '';
+        if (plmarginValue < -1) {
+            bgColor = '#f3aeae'; // Red color
+        } else if (plmarginValue > 1) {
+            bgColor = '#a4dd8e'; // Green color
+        } else if (plmarginValue >= -1 && plmarginValue <= 1) {
+            bgColor = '#f3f594'; // Yellow color
+        }
+
+        // Apply background color to the plmargin cell
+        if (bgColor) {
+            cell.style.backgroundColor = bgColor;
+
+            // Apply background color logic to the wtgpercent cell
+            var row = cell.parentElement;
+            var wtgpercentCell = row.querySelector('.wtgpercent');
+            if (wtgpercentCell) {
+                var wtgpercentValue = parseFloat(wtgpercentCell.textContent);
+                if (bgColor === '#a4dd8e' && wtgpercentValue >= 4) {
+                    wtgpercentCell.style.backgroundColor = '#a4dd8e'; // Green color
+
+                    // Apply same color to articlename if wtgpercent >= 4
+                    var articlenameCell = row.querySelector('.articlename');
+                    if (articlenameCell) {
+                        articlenameCell.style.backgroundColor = '#a4dd8e'; // Green color
+                    }
+                } else if (wtgpercentValue >= 4) {
+                    wtgpercentCell.style.backgroundColor = '#f1c183'; // Orange color
+
+                    // Apply same color to articlename if wtgpercent >= 4
+                    var articlenameCell = row.querySelector('.articlename');
+                    if (articlenameCell) {
+                        articlenameCell.style.backgroundColor = '#f1c183'; // Orange color
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+</html>

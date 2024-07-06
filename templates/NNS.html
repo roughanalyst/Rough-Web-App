@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NNS</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+</head>
+<body>
+
+        <div class="container">    
+            <h1>NNS</h1>
+            <a href="home" class="back-link">Back</a>
+            <a href="/FAQ" class="nav" style="margin-left:550px;">FAQ</a>
+            <!-- <form action="{{ url_for('logout') }}" method="post">
+                <button type="submit" class="btnusername">{{username}}</button>
+            </form>   -->
+            <img src="/static/kgpng.png" alt="">
+              
+        </div>
+
+            <div class="box">
+                <form method="post" class="form_">
+                    <label for="apply_lotno">LOTNO : </label>
+                    <select id="apply_lotno" name="apply_lotno" title="Select LotNo">
+                        <option value="">-- Select LOTNO --</option>
+                        {% for lotno in lotnos %}
+                        <option value="{{ lotno }}">{{ lotno }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" value="Apply">
+                    <a href="NNS_AUDIT" class="button" title="View NNS Audit">NNS AUDIT</a>
+                    <br>
+                    <button id="exportToExcel" type="submit" title="Click to export excel file">Export to excel </button>
+                </form>
+                <div class="avg">
+                    <label for="average">Average : {{ avg_mpm_pd_value }}</label>
+                </div>
+                <div class="avg">
+                    <label for="average">Current Average : {{ curr_pd_value }}</label>
+                </div>     
+            </div>
+            
+        <div class="table-container">
+            <table>
+                    <thead>
+                        <tr>
+                            {% for column in column_names %}
+                            <th><div class="resize">{{ column }}</div></th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                <tbody>
+                    {% for row in table_data %}
+                    <tr>
+                        {% for item in row %}
+                        <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+</body>
+<script>
+    document.getElementById('exportToExcel').addEventListener('click', function () {
+        var wb = XLSX.utils.table_to_book(document.querySelector('table'));
+        XLSX.writeFile(wb, 'NNS.xlsx');
+    });
+</script>
+</html>

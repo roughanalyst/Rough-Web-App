@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <!-- <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0"> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            background-color: #e9e6e6;
+            overflow: hidden;
+        }
+
+        header {
+            margin-top: 0;
+            background-color: black;
+            color: white;
+            font-family: 'Calibri', 'Arial Narrow Bold';
+            padding: 10px;
+            display: flex;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            justify-content: space-between;
+        }
+
+        .overflow {
+            overflow-y: auto;
+            height: 80vh;
+        }
+
+        .logout-btn {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 8px 16px;
+            margin-top: 20px;
+            font-family: 'Calibri', 'Arial Narrow Bold';
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+
+        .logout-btn:hover {
+            background-color: rgb(214, 219, 230);
+        }
+
+        .logout_arrow {
+            background-image: url('/static/arrow_right.png');
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: right center;
+            padding-right: 30px;
+        }
+
+        input[type="submit"] {
+            background-color: white;
+            color: black;
+            border: none;
+            margin-top: 20px;
+            font-family: 'Calibri', 'Arial Narrow Bold';
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 11px;
+            margin-left: 71%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: rgb(214, 219, 230);
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .name_user {
+            padding-left: 20px;
+            font-size: 25px;
+        }
+
+        h2 {
+            margin-left: 42%;
+        }
+
+        h3 {
+            color: #f0f0f0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    
+        .title {
+            margin-top: 0;
+            background-color: #ffff;
+            color: rgb(17, 17, 17);
+            font-family: 'Calibri', 'Arial Narrow Bold';
+            padding: 10px;
+            display: flex;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav {
+            /* background-color: #ccc; */
+            padding: 6px;
+            text-decoration: none;
+            color: #161616;
+            border: 1px solid #bbb6b6;
+            margin-right: 20px;
+        }
+
+        .container1,
+        .container2,
+        .container3 {
+            background-color: #1db2ec;
+            padding: 20px;
+            margin: 15px;
+            margin-right: 10px;
+            display: flex;
+            width: 150px;
+            align-items: center;
+            font-family: 'Calibri', 'Arial Narrow Bold';
+            justify-content: space-evenly;
+            border-radius: 20px;
+            box-shadow: 10px 10px 2px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .container2 {
+            width: 170px;
+        }
+
+        .container1:hover,
+        .container2:hover,
+        .container3:hover {
+            background-color: rgb(88, 188, 235);
+        }
+
+        .main_container,
+        .main_container2,
+        .main_container3,
+        .main_container4,
+        .main_container5 {
+            display: flex;
+            align-content: center;
+            text-align: center;
+            justify-content: center;
+            padding: 10px;
+        }
+        
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);/
+        }
+
+        /* Popup content */
+        .popup-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 40px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        /* Close button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        label {
+            margin-bottom: 8px;
+            display: block;
+            font-weight: bold;
+        }
+
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .pwdchange {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .pwdchange:hover {
+            background-color: #357c38;
+        }
+
+        @media screen and (max-width: 600px) {
+            .popup-content {
+                width: 90%;
+            }
+        }
+
+        .success-message {
+            color: green;
+        }
+
+        .error-message {
+            color: red;
+        }
+    </style>
+
+    <script>
+        function redirectOnClick(event) {
+            if (event.target.classList.contains('container1')) {
+                var href = event.target.querySelector('a').getAttribute('href');
+                window.location.href = href;
+            }
+        }
+
+        function redirecthp(event) {
+            if (event.target.classList.contains('container2')) {
+                var href = event.target.querySelector('a').getAttribute('href');
+                window.location.href = href;
+            }
+        }
+
+        function redirect_missing(event) {
+            if (event.target.classList.contains('container3')) {
+                var href = event.target.querySelector('a').getAttribute('href');
+                window.location.href = href;
+            }
+        }
+
+    </script>
+
+</head>
+
+<body>
+    <header>
+        <h1 class="name_user">Welcome, {{ username }} </h1>
+        <input type="submit" value="Change Password" id="changepass">
+        <form action="{{ url_for('logout') }}" method="post">
+
+            <button class="logout-btn" type="submit">
+                <span class="logout_arrow">{{username}}</span>
+            </button>
+        </form>
+    </header>
+    <div class="title">
+        <h2>ROUGH RESULT DASHBOARD</h2>
+        <a href="" class="nav" style="margin-left: 30%;">About</a>
+        <a href="" class="nav">FAQ</a>
+        <a href="" class="nav">Contact</a>
+    </div>
+    
+    <div class="overflow">
+        <div class="main_container" onclick="redirectOnClick(event)">
+            {% for option in user_rights %}
+            <div class="container1">
+                <h3>
+                    <a href="{{ url_for('dynamic_page', page=option) }}" style="color: #f0f0f0;">{{ option }}</a>
+                </h3>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="main_container2" onclick="redirecthp(event)">
+            <div class="container1">
+                <h3>GET RATE</h3>
+            </div>
+            <div class="container2">
+                <h3>
+                    <a href="historyprice" style="color: #f0f0f0;" title="View History Price">HISTORY PRICE</a>
+                </h3>
+            </div>
+            <div class="container3" onclick="redirect_missing(event)">
+                <h3>
+                    <a href="missingstone" style="color: #f0f0f0;" title="View Missing Stone">MISSING STONE</a>
+                </h3>
+            </div>
+        </div>
+
+        <div class="main_container3" onclick="redirecthp(event)">
+            <div class="container1">
+                <h3>
+                    <a href="upload" style="color: #f0f0f0;" title="Go to Upload File page">UPLOAD</a>
+                </h3>
+            </div>
+            <div class="container2">
+                <h3>
+                    <a href="P_AND_L_REPORT" style="color: #f0f0f0;" title="View P & L Report">P & L REPORT</a>
+                </h3>
+            </div>
+            <div class="container3">
+                <h3>
+                    <a href="portfolio" style="color: #f0f0f0;" title="View Your Portfolio">PORTFOLIO</a>
+                </h3>
+            </div>
+        </div>
+
+        <div class="main_container4" onclick="redirecthp(event)">
+            <div class="container1">
+                <h3>
+                    <a href="pricechange" style="color: #f0f0f0;" title="View Price Change">PRICE CHANGE</a>
+                </h3>
+            </div>
+            <div class="container2">
+                <h3>
+                    <a href="Compare_report" style="color: #f0f0f0;" title="View Compare Report">COMPARE REPORT</a>
+                </h3>
+            </div>
+            <div class="container3">
+                <h3>
+                    <a href="assotment" style="color: #f0f0f0;" title="View Assotment file">ASSOTMENT</a>
+                </h3>
+            </div>
+        </div>
+
+        <div class="main_container5" onclick="redirecthp(event)">
+            <div class="container1">
+                <h3>
+                    <a href="Production_audit" style="color: #f0f0f0;">PRODUCTION</a>
+                </h3>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <span class="close" id="close">&times;</span>
+
+            <form action="{{ url_for('change_password') }}" id="changePasswordForm" method="post">
+                <label for="user_id">User ID:</label>
+                <input type="text" id="user_id" name="user_id" title="Enter Your User_ID">
+                <label for="current_password">Current Password</label>
+                <input type="password" id="current_password" name="current_password" title="Enter Your Current Password"
+                    required>
+                <label for="new_password">New Password</label>
+                <input type="password" id="new_password" name="new_password" title="Enter your New Password" required>
+                <label for="confirm_password">Confirm New Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" title="Enter your New Password"
+                    required>
+                <button type="submit" class="pwdchange">Change Password</button>
+            </form>
+            <p class="message"></p>
+        </div>
+    </div>
+
+    <script>
+        var modal = document.getElementById('popup');
+        var btn = document.getElementById("changepass");
+        var span = document.getElementById("close");
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        $(document).ready(function () {
+            $('#changePasswordForm').submit(function (e) {
+                e.preventDefault();
+
+                var form = $(this);
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            $('.message').removeClass('error-message').addClass('success-message').text(response.message);
+                        } else {
+                            $('.message').removeClass('success-message').addClass('error-message').text(response.error);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        $('.message').removeClass('success-message').addClass('error-message').text('An error occurred while processing your request.');
+                    }
+                });
+            });
+        });
+
+
+        // Function to disable back button
+        function disableBackButton() {
+            window.history.pushState(null, "", window.location.href);
+            window.onpopstate = function () {
+                window.history.pushState(null, "", window.location.href);
+            };
+        }
+
+        // Call the function to disable back button when the page loads
+        window.onload = function () {
+            disableBackButton();
+        };
+
+        // Call the function to disable back button when navigating away from the page (e.g., on logout)
+        window.onbeforeunload = function () {
+            disableBackButton();
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Report</title>
+    <!-- <link rel="stylesheet" href="/static/reports.css"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Calibri', 'Arial Narrow Bold', sans-serif;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            position: sticky;
+            width: 100%;
+            height: 80px;
+            top: 0;
+            background-color: rgb(236, 236, 236);
+            box-shadow: 5px 10px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            z-index: 2;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-left: 44%;
+        }
+
+        img {
+            height: 60px;
+            width: 400px;
+            margin-left: auto;
+        }
+
+        .back-link {
+            margin-right: auto;
+            display: flex;
+            width: 20px;
+            height: 20px;
+            background-image: url('/static/backarrow.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            position: fixed;
+            top: 27px;
+            left: 20px;
+            text-indent: -9999px;
+            /* Hide text */
+        }
+
+        button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            margin-left: auto;
+            padding: 8px 16px;
+            background-color: #000000;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .boxcontainer {
+            padding: 8px 24px;
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            margin-top: 11px;
+            width: 100%;
+            height: 60px;
+            background-color: rgb(251, 251, 251);
+            display: flex;
+            border-radius: 10px;
+            box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .boxcontainer label {
+            margin-left: 20px;
+        }
+
+        select {
+            padding: 6px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 170px;
+        }
+
+        input[type="submit"] {
+            padding: 8px 20px;
+            font-size: 16px;
+            background-color: #2499bd;
+            margin-left: 8px;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .previous,
+        .Current {
+            overflow-y: auto;
+            width: 50%;
+            float: left;
+            padding: 10px;
+            box-sizing: border-box;
+            height: 81vh;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            border: 1px solid black;
+        }
+
+        thead th {
+            background-color: #cac8c8;
+            border: 1px solid;
+            padding: 8px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        tbody td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .label-container {
+            display: flex;
+            margin-bottom: 10px;
+            background-color: #cacaf3;
+            padding: 8px 20px;
+            border: 1px solid;
+        }
+
+        .label-container label {
+            margin-right: 190px;
+            font-weight: bold;
+        }
+
+        .diff {
+            margin-left: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Compare Report</h1>
+        <a href="home" class="back-link">Back</a>
+        <img src="/static/kgpng.png" alt="">
+    </div>
+
+    <div class="boxcontainer">
+        <form method="post" class="form_">
+            <label for="apply_lotno">LOTNO : </label>
+            <select name="apply_lotno" title="Select LotNo">
+                <option value="">-- Select LOTNO --</option>
+                {% for lotno in lotnos %}
+                <option value="{{ lotno }}">{{ lotno }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Apply" id="apply_lotno">
+
+            <label for="fromMonth">Select Date: </label>
+            <input type="date" id="fromMonth" name="fromMonth" title="Select Date">
+            <input type="submit" value="Apply">
+
+            <button id="convertpdf" type="button" onclick="Export()">Download PDF</button><br>
+        </form>
+    </div>
+
+    <div class="previous">
+        <div class="label-container">
+
+            <label class="lot">LOT NO:</label>
+            <label class="avg_mpm_pd">AVG_MPM_PD:</label>
+            <label class="up_avg_mpm_pd">Upd_AVG_MPM_PD: </label>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>PktNo</th>
+                    <th>Tag</th>
+                    <th>Cts</th>
+                    <th>Shape</th>
+                    <th>Color</th>
+                    <th>Clarity</th>
+                    <th>Cut</th>
+                    <th>Sym</th>
+                    <th>Flour</th>
+                    <th>Stone Status</th>
+                    <th>AVG_MPM_PD</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="Current">
+        <div class="label-container">
+            <label class="dispdate">Date:</label>
+            <label class="diff">DIFFERENCE: </label>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tag</th>
+                    <th>Cts</th>
+                    <th>Shape</th>
+                    <th>Color</th>
+                    <th>Clarity</th>
+                    <th>Cut</th>
+                    <th>Sym</th>
+                    <th>Flour</th>
+                    <th>Stone Status</th>
+                    <th>AVG_MPM_PD</th>
+                    <th>Diff</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+    </div>
+</body>
+
+</html>

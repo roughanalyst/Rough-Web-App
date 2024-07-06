@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Production</title>
+    <link rel="stylesheet" href="/static/data.css">
+</head>
+<body>
+    <div class="headcontainer">
+        <h1>Production Audit Data</h1>
+        <a href="home" class="back-link">Back</a>
+        <img src="/static/kgpng.png" alt="">
+        <br>
+    </div>
+    <div class="range">
+        <form method="post" action="{{ url_for('audit_production') }}" class="form">
+            <label for="fromMonth">Month : </label>
+            <input type="month" id="fromMonth" name="fromMonth" value="{{ from_month_audit }}">
+            <input type="submit" id="submitBtn" value="Submit">
+        </form>
+    </div>
+    
+    <div class="page-number">
+        {% if not from_month_audit %}
+            <p>Please Select Production Month</p>
+        {% elif not pro_data_audit %}
+            <p>No data available for the selected month.</p>
+        {% else %}
+            <p>Data available. Navigate to specific pages:</p>
+            <ul>
+                {% for i in range(1, tp + 1) %}
+                    <li><a href="{{ url_for('display_prd_data', page=i) }}">Page {{ i }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>

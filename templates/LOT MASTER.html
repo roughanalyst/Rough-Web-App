@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lot Master</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="container">
+    <h1>LOT MASTER</h1>
+    <a href="home" class="back-link">Back</a>
+    <img src="/static/kgpng.png" alt="">
+</div>
+
+<div class="box">
+    <form action="/LOT MASTER" method="POST">
+        <label for="selected_lotno">Select LOTNO : </label>
+        <select id="selected_lotno" name="selected_lotno" title="Select LotNo">
+            <option value="">All</option>
+            {% for lotno in select_options %}
+            <option value="{{ lotno }}" {% if selected_lotno==lotno %} selected {% endif %}>{{ lotno }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Search">
+    </form>
+</div>
+
+<div class="table-container">
+    <table>
+            <thead>
+                <tr>
+                    {% for column in column_names %}
+                    <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+        <tbody>
+            {% for row in table_data %}
+            <tr>
+                {% for item in row %}
+                <td>{{ item }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+
+</html>

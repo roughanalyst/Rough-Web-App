@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQs Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link rel="stylesheet" href="/static/faq.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Frequently Asked Questions(FAQs)</h1>
+        <a href="P_AND_L_REPORT" class="back-link">Back</a>
+        <img src="/static/kgpng.png" alt="">
+    </div>
+
+    <div class="questions-container">
+        <h1>QUESTIONS?</h1>
+        <div class="question-container">
+            <div class="question">
+                <p>What is P & L Report ?</p>
+                <button type="button" class="question-button" title="Click to see answer">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p>A P & L Report (Profit and Loss Report) summarizes a company's revenues, costs, and expenses over a specific period to show profit or loss.</p>
+            </div>
+        </div>
+
+        <div class="question-container">
+            <div class="question">
+                <p>What is "Polish Cts" field in P & L Report?</p>
+                <button type="button" class="question-button">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p>Indicates the carat weight of Polished Diamonds for Manufacturing.</p>
+            </div>
+        </div>
+
+        <div class="question-container">
+            <div class="question">
+                <p>What does the "COGS" field indicate in the report?</p>
+                <button type="button" class="question-button">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p>Cost of Goods Sold Means Direct costs of producing goods.</p>
+            </div>
+        </div>
+        <div class="question-container">
+            <div class="question">
+                <p>What does the "Expense" attribute indicate in the report?</p>
+                <button type="button" class="question-button">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p>The "Expense" attribute in Report indicates the total costs incurred by the company to operate its business, excluding the Cost of Goods Sold (COGS). This includes costs such as salaries, rent, utilities, marketing, and other operating expenses.</p>
+            </div>
+        </div>
+        <div class="question-container">
+            <div class="question">
+                <p>What does the "Production Cost" field indicate in the report?</p>
+                <button type="button" class="question-button">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p> The cost of raw materials and components used in the manufacturing process cost.</p>
+            </div>
+        </div>
+        <div class="question-container">
+            <div class="question">
+                <p>What does the "Provisonal" field indicate in the report?</p>
+                <button type="button" class="question-button">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p>The "Provisional" field in Report indicates estimated or temporary value that are not yet finalized by bombay team.These values are subject to change once final data is available and verified. </p>
+            </div>
+        </div>
+        <div class="question-container">
+            <div class="question">
+                <p>What does the "Avg Lock" attribute indicate in the report?</p>
+                <button type="button" class="question-button">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p>The "AVG LOCK" attribute indicates average price at which goods are sold or secured for sale, This price is agreed upon in advance and helps the company lock in revenue and manage price fluctuations.</p>
+            </div>
+        </div>
+        <div class="question-container">
+            <div class="question">
+                <p>What does the "Total Sales Value" attribute indicate in the report?</p>
+                <button type="button" class="question-button">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p>The "Total Sales Value" attribute in Report indicates the total revenue generated from the sale of goods.</p>
+            </div>
+        </div>
+        <div class="question-container">
+            <div class="question">
+                <p>What does the "Net Profit (Loss)" attribute indicate in the report?</p>
+                <button type="button" class="question-button">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p>The "Net Profit (Loss)" attribute in Report indicates the total profit or loss result after all revenues, costs, and expenses, including interest, have been deducted.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const questionContainers = document.querySelectorAll('.question-container');
+
+            questionContainers.forEach(container => {
+                const question = container.querySelector('.question');
+                const answer = container.querySelector('.answer');
+
+                question.addEventListener('click', function () {
+                    container.classList.toggle('active');
+                });
+            });
+        });
+
+    </script>
+</body>
+
+</html>

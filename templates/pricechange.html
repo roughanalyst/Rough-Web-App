@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Change</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include Chosen CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
+    <!-- Include Chosen JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Calibri', 'Arial Narrow Bold', sans-serif;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            position: sticky;
+            width: 100%;
+            height: 80px;
+            top: 0;
+            background-color: rgb(236, 236, 236);
+            box-shadow: 5px 10px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            z-index: 2;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-left: 46%;
+        }
+
+        img {
+            height: 60px;
+            width: 400px;
+            margin-left: auto;
+        }
+
+        .back-link {
+            margin-right: auto;
+            display: flex;
+            width: 20px;
+            height: 20px;
+            background-image: url('/static/backarrow.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            position: fixed;
+            top: 27px;
+            left: 20px;
+            text-indent: -9999px;
+            /* Hide text */
+        }
+
+        button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            margin-left: auto;
+            padding: 8px 16px;
+            background-color: #000000;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .boxcontainer {
+            padding: 8px 24px;
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            margin-top: 11px;
+            width: 100%;
+            height: 80px;
+            background-color: rgb(251, 251, 251);
+            display: flex;
+            border-radius: 10px;
+            box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .boxcontainer label {
+            margin-left: 20px;
+        }
+
+        select.chosen-select {
+            width: 110%;
+        }
+
+        .chosen-container-multi .chosen-choices {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        input[type="submit"] {
+            padding: 8px 20px;
+            font-size: 16px;
+            background-color: #2499bd;
+            margin-left: 8px;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .table-container {
+            text-align: center;
+            align-content: center;
+            justify-content: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            border: 1px solid black;
+            background-color: #fff;
+            margin-top: 45px;
+            margin-left: 450px;
+        }
+
+        th {
+            background-color: #4a7dad;
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+            font-size: 18px;
+            color: #ffff;
+        }
+
+        td {
+            border: 1px solid black;
+            text-align: center;
+            /* white-space: nowrap; */
+            /* text-overflow: ellipsis; */
+            line-height: 2;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Price Change</h1>
+        <a href="home" class="back-link">Back</a>
+        <img src="/static/kgpng.png" alt="">
+    </div>
+    <div class="boxcontainer">
+        <form method="post" action="pricechange">
+            <label for="select_lotno">LOTNO :</label>
+            <select name="select_lotno" id="select_lotno" title="Select LotNo" multiple class="chosen-select">
+                <option value="">-- Select LOTNO --</option>
+                {% for lotno in select_options %}
+                <option value="{{ lotno }}">{{ lotno }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Apply">
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table id="pricetable">
+            <thead>
+                <tr>
+                    <th>LOTNO</th>
+                    <th title="This Field indicates total Amount of Bid_Pred data">Bid/Pred Price</th>
+                    <th title="This Field indicates total Amount of History Price data">Buying Date Price</th>
+                    <th title="This field indicates the differece between Bid/Pred Price and History Price">PC Diff</th>
+                    <th title="This field indicates the difference% of Bid/Pred Price and History Price">Diff%</th>
+                </tr>
+            </thead>
+            <tbody id="pricechange">
+                {% for row in data %}
+                <tr>
+                    <td>{{ row['Lotno'] }}</td>
+                    <td>{{ row['bid_pred_total'] }}</td>
+                    <td>{{ row['history_total'] }}</td>
+                    <td>{% if row['diff'] < 0 %} - {{ -row['diff'] }} {% else %} {{ row['diff'] }} {% endif %}</td>
+                    <td>{{ row['diff_percent'] }}</td>
+                </tr>
+                {% endfor %}
+
+                {% if grand_total %}
+                <tr>
+                    <td style="background-color: #6ea3b1;">GRAND TOTAL</td>
+                    <td style="background-color: #7ac2d4;">{{ grand_total['bid_pred_total'] }}</td>
+                    <td style="background-color: #7ac2d4;">{{ grand_total['history_total'] }}</td>
+                    <td style="background-color: #7ac2d4;">{{ grand_total['diff'] }}</td>
+                    <td style="background-color: #7ac2d4;">{{ grand_total['diff_percent'] }}</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</body>
+<script>
+    $(document).ready(function () {
+        $('#select_lotno').chosen({
+            no_results_text: "Oops, nothing found!",
+            placeholder_text_multiple: "Select LotNo"
+        });
+    });
+</script>
+
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="5; url=/portfolio">
+    <title>Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Calibri', 'Arial Narrow Bold', sans-serif;
+            margin: 0;
+            background-color: rgb(244, 244, 244);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            position: sticky;
+            width: 100%;
+            height: 80px;
+            top: 0;
+            background-color: rgb(236, 236, 236);
+            box-shadow: 5px 10px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            z-index: 2;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-left: 46%;
+        }
+
+        img {
+            height: 60px;
+            width: 400px;
+            margin-left: auto;
+        }
+
+        .back-link {
+            margin-right: auto;
+            display: flex;
+            width: 20px;
+            height: 20px;
+            background-image: url('/static/backarrow.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            position: fixed;
+            top: 27px;
+            left: 20px;
+            text-indent: -9999px;
+            /* Hide text */
+        }
+
+        button {
+            position: absolute;
+            /* margin-left: auto; */
+            padding: 8px 16px;
+            /* background-color: #000000;
+            color: #fff; */
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btnusername {
+            top: 25px;
+            right: 25%;
+            background-color: #ccc;
+            color: #161616;
+            font-size: 16px;
+        }
+
+        .box {
+            padding: 8px 24px;
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            margin-top: 11px;
+            width: 100%;
+            height: 80px;
+            background-color: rgb(251, 251, 251);
+            display: flex;
+            border-radius: 10px;
+            box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form_ {
+            /* position: fixed; */
+            height: 100%;
+            width: 446px;
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        form {
+            float: left;
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+            align-content: center;
+            font-size: 18px;
+        }
+
+        select {
+            padding: 8px;
+            font-size: 16px;
+            height: 35px;
+            align-self: center;
+        }
+
+        input[type="submit"] {
+            padding: 0 20px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            background-color: #1fa0d3;
+            font-size: 15px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #78bedf;
+        }
+
+        .check-container {
+            margin: 20px 0;
+        }
+
+        .check-container table {
+            border-collapse: collapse;
+        }
+
+        .check-container th {
+            background-color: #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .check-container td {
+            padding: 10px;
+        }
+
+        .check-container input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            text-align: center;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Hover effect for input fields */
+        .check-container input[type="text"]:hover {
+            border-color: #888;
+        }
+
+        /* Focus effect for input fields */
+        .check-container input[type="text"]:focus {
+            outline: none;
+            border-color: #555;
+        }
+
+
+        .table-container {
+            margin-top: 96px;
+
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            border: 1px solid black;
+            margin-top: 45px;
+            margin-left: 100px;
+
+        }
+
+        th {
+            background-color: #2b839e;
+            border-right: 1px solid;
+            border-bottom: 1px solid;
+            padding: 10px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        td {
+            border-right: 1px solid;
+            border-bottom: 1px solid;
+            text-align: center;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            line-height: 2;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Portfolio</h1>
+        <a href="home" class="back-link">Back</a>
+        <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="btnusername">{{username}}</button>
+        </form>
+        <img src="/static/kgpng.png" alt="">
+        <br>
+    </div>
+
+    <!-- <div class="box">
+        <form method="post" class="form_">
+            <label for="apply_lotno">LOTNO : </label>
+            <select id="apply_lotno" name="apply_lotno" title="Select lotno">
+                <option value="">-- Select LOTNO --</option>
+                {% for lotno in lotnos %}
+                <option value="{{ lotno }}">{{ lotno }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Apply">
+        </form>
+    </div> -->
+
+    <div class="check-container">
+        <table id="">
+            <thead class="checkcon">
+                <tr>
+                    <th>Today Check</th>
+                    <th>Month Check</th>
+                    <th>Total Check</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" placeholder="abc"></td>
+                    <td><input type="text" placeholder="abc"></td>
+                    <td><input type="text" placeholder="abc"></td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    {% for column in column_names %}
+                    <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody id="portfolio_table">
+                {% for row in updated_row %}
+                <tr>
+                    {% for item in row %}
+                    <td>{{ item }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function updatePortfolioPage(updatedRow, columnNames) {
+            var tableBody = document.querySelector("#portfolio_table");
+            tableBody.innerHTML = ""; // Clear existing rows
+
+            updatedRow.forEach(function (row) {
+                var newRow = "<tr>";
+                columnNames.forEach(function (columnName) {
+                    newRow += "<td>" + row[columnName] + "</td>";
+                });
+                newRow += "</tr>";
+                tableBody.innerHTML += newRow;
+            });
+        }
+    </script>
+</body>
+
+</html>

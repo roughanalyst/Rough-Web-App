@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Upload</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#file').change(function() {
+                var file_data = $('#file')[0].files[0];
+                var form_data = new FormData();
+                form_data.append('file', file_data);
+                $.ajax({
+                    url: '/get_sheets',
+                    type: 'POST',
+                    data: form_data,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        var sheets = data.sheets;
+                        var options = '';
+                        for (var i = 0; i < sheets.length; i++) {
+                            options += '<option value="' + sheets[i] + '">' + sheets[i] + '</option>';
+                        }
+                        $('#sheet').html(options);
+                    }
+                });
+            });
+
+            $.ajax({
+                url: '/get_tables',
+                type: 'POST',
+                success: function(data) {
+                    var tables = data.tables;
+                    var options = '';
+                    for (var i = 0; i < tables.length; i++) {
+                        options += '<option value="' + tables[i] + '">' + tables[i] + '</option>';
+                    }
+                    $('#table').html(options);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <h1>Data Upload</h1>
+    <form method="POST" enctype="multipart/form-data" action="/">
+        <label for="file">Choose Excel File:</label>
+        <input type="file" id="file" name="file" accept=".xlsx">
+        <br><br>
+        <label for="sheet">Select Sheet:</label>
+        <select id="sheet" name="sheet">
+            <!-- Sheet options will be populated dynamically using JavaScript -->
+        </select>
+        <br><br>
+        <label for="table">Select Table:</label>
+        <select id="table" name="table">
+            <!-- Table options will be populated dynamically using JavaScript -->
+        </select>
+        <br><br>
+        <input type="submit" value="Upload">
+
+    </form>
+
+</body>
+</html>'

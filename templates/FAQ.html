@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link rel="stylesheet" href="/static/faq.css">
+    <style>
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <h1>Frequently Asked Questions(FAQs)</h1>
+        <a href="NNS" class="back-link">Back</a>
+        <img src="/static/kgpng.png" alt="">
+    </div>
+
+    <div class="questions-container">
+        <h1>QUESTIONS?</h1>
+        <div class="question-container">
+            <div class="question">
+                <p>How to use NNS and NNS AUDIT page?</p>
+                <button type="button" class="question-button" title="Click to see answer">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p>On the NNS page, start by picking a lot number. Once you've selected one, all the info related to
+                    that lot number will show up in a table. Then, you can filter the table just by clicking on the
+                    column headers.</p>
+                <p>When you click on the "NNS Audit" button, you'll land on the NNS Audit page. Here, you can filter and
+                    audit your data. On this page, you'll find the average, which comes in two types: new and old
+                    averages. After you finish auditing, simply click on the "Done" button to update your portfolio.</p>
+            </div>
+        </div>
+        <div class="question-container">
+            <div class="question">
+                <p>What is the significance of "Program" in this data?</p>
+                <button type="button" class="question-button" title="Click to see answer">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p>"Program" refers to special orders of polished goods based on specific shape or 4C parameter
+                    requirement.</p>
+            </div>
+        </div>
+        <div class="question-container">
+            <div class="question">
+                <p>What does the "Article" attribute indicate in the data?</p>
+                <button type="button" class="question-button" title="Click to see answer">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p>The "Article" attribute indicates rough diamonds based on size, original shape, clarity,
+                    and color for better organization, you have to first select this filter to insert any data
+                    in Report.</p>
+            </div>
+        </div>
+        <div class="question-container">
+            <div class="question">
+                <p>What does "Rough Cts" signify within this data?</p>
+                <button type="button" class="question-button" title="Click to see answer">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p>"Rough Cts" represents the total original carat weight of rough diamonds in a lot.</p>
+            </div>
+        </div>
+        <div class="question-container">
+            <div class="question">
+                <p>What is the significance of the "Tag" attribute?</p>
+                <button type="button" class="question-button" title="Click to see answer">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p> "Tag" is a label used to identify a part of the original single diamond.</p>
+            </div>
+        </div>
+        <div class="question-container">
+            <div class="question">
+                <p> What are "By Products" in this data?</p>
+                <button type="button" class="question-button" title="Click to see answer">
+                    <span class="show-answer"><i class="fas fa-angle-down"></i></span>
+                    <span class="hide-answer"><i class="fas fa-angle-up"></i></span>
+                </button>
+            </div>
+            <div class="answer">
+                <p> "By Products" indicate the monetary estimation of leftover uncut or rough
+                    diamonds.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const questionContainers = document.querySelectorAll('.question-container');
+
+        questionContainers.forEach(container => {
+            const question = container.querySelector('.question');
+            const answer = container.querySelector('.answer');
+
+            question.addEventListener('click', function () {
+                container.classList.toggle('active');
+            });
+        });
+    });
+
+</script>
+
+</html>
