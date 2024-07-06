@@ -2076,5 +2076,6 @@ def export_pl():
 
     return render_template('Export_pl.html', data=data, unique_months_count=unique_months_count, grand_total=grand_total, fmonth_name=fmonth_name, tmonth_name=tmonth_name, pl_type=pl_type)
 
+print("Ishita")
 if __name__ == '__main__':
     app.run(debug=True)
