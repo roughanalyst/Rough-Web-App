@@ -1,1 +1,0 @@
-﻿# Rough Analysis
